@@ -2,7 +2,7 @@ import enum
 import logging
 import typing as t
 
-logging.basicConfig(format='%(levelname)s | %(message)s', level=logging.DEBUG)
+log = logging.getLogger("chickenpy.VM")
 
 
 @enum.unique
@@ -73,10 +73,10 @@ class Machine:
         Executes the current opcode.
         See: https://esolangs.org/wiki/Chicken#Instructions
         """
-        logging.debug(f"Evaluating {str(op)}")
+        log.debug(f"Evaluating {str(op)}")
 
         if op is OPCODE.CHICKEN:
-            logging.debug("Pushing 'chicken' to stack")
+            log.debug("Pushing 'chicken' to stack")
             self.push("chicken")
 
         elif op is OPCODE.ADD:
@@ -86,34 +86,34 @@ class Machine:
                 result = operand_1 + operand_2
             except TypeError:
                 result = f"{operand_1}{operand_2}"
-            logging.debug(f"{operand_1!r} + {operand_2!r} = {result!r}")
+            log.debug(f"{operand_1!r} + {operand_2!r} = {result!r}")
             self.push(result)
 
         elif op is OPCODE.SUB:
             operand_2, operand_1 = self.pop(), self.pop()
             # Javascript implicitly casts to int
             result = int(operand_1) - int(operand_2)
-            logging.debug(f"{operand_1!r} - {operand_2!r} = {result!r}")
+            log.debug(f"{operand_1!r} - {operand_2!r} = {result!r}")
             self.push(result)
 
         elif op is OPCODE.MUL:
             operand_2, operand_1 = self.pop(), self.pop()
             # Javascript implicitly casts to int
             result = int(operand_2) * int(operand_1)
-            logging.debug(f"{operand_1!r} * {operand_2!r} = {result!r}")
+            log.debug(f"{operand_1!r} * {operand_2!r} = {result!r}")
             self.push(result)
 
         elif op is OPCODE.CMP:
             operand_2, operand_1 = self.pop(), self.pop()
             result = operand_2 == operand_1
-            logging.debug(f"{operand_1!r} {'==' if result else '!='!r} {operand_2!r}")
+            log.debug(f"{operand_1!r} {'==' if result else '!='!r} {operand_2!r}")
             self.push(result)
 
         elif op is OPCODE.LOAD:
             load_from = self.next_token
             source = self.stack[load_from]
             load_index = self.pop()
-            logging.debug(
+            log.debug(
                 f"Loading index {load_index!r} from {'stack' if load_from == 0 else 'user input'!r}"
             )
             # Accessing a string with an invalid index returns `undefined` in JS.
@@ -123,32 +123,32 @@ class Machine:
                 load = source[load_index]
             except IndexError:
                 load = ""
-            logging.debug(f"Loading {load!r} to top of stack")
+            log.debug(f"Loading {load!r} to top of stack")
             self.push(load)
 
         elif op is OPCODE.STORE:
             address = self.pop()
             load = self.pop()
-            logging.debug(f"Storing {load!r} to {address!r}")
+            log.debug(f"Storing {load!r} to {address!r}")
             self.stack[address] = load
 
         elif op is OPCODE.JMP:
             rel_offset = self.pop()
             if self.pop():
-                logging.debug(f"Jumping pointer by {rel_offset!r}")
+                log.debug(f"Jumping pointer by {rel_offset!r}")
                 self.instruction_pointer += rel_offset
             else:
-                logging.debug("Jump skipped")
+                log.debug("Jump skipped")
 
         elif op is OPCODE.CHAR:
             token = self.pop()
             char = chr(token)
-            logging.debug(f"Pushing {token!r} as {char!r}")
+            log.debug(f"Pushing {token!r} as {char!r}")
             self.push(char)
 
         else:
             token = op - 10
-            logging.debug(f"Pushing {token!r} as literal")
+            log.debug(f"Pushing {token!r} as literal")
             self.push(token)
 
     def run(self) -> Token:
@@ -158,6 +158,6 @@ class Machine:
                 break
 
             self.dispatch(self.next_token)
-            logging.debug(f"Stack: {self.data_stack!r}")
+            log.debug(f"Stack: {self.data_stack!r}")
 
         return self.peek()
