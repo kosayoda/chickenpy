@@ -38,11 +38,15 @@ def interpret(source_code: str, input: t.Optional[str] = None) -> t.Optional[int
 
 
 @click.command()
-@click.option("--debug/--no-debug", default=False, envvar="DEBUG")
-@click.option("-f", "--file", type=click.File("r"), default=None)
+@click.option("-f", "--file", type=click.File("r"), default=None, help="The source code to run.")
+@click.option("--debug/--no-debug", default=False, envvar="DEBUG", help="Show debug information.")
 @click.argument("input", type=str, default="")
 def main(file: click.File, debug: bool, input: int) -> int:
-    """The main program."""
+    """
+    A Python implementation of the chicken esoteric programming language.
+
+    Pass a source file using -f/--file or pipe the source to the program.
+    """
     # Debug mode
     if debug:
         log.setLevel(logging.DEBUG)
