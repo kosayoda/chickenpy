@@ -3,6 +3,10 @@
 A Python implementation of the <a href="https://esolangs.org/wiki/Chicken">chicken</a> esoteric programming language by Torbjörn Söderstedt.
 </p>
 
+<p align="center">
+<img width="25%" src="assets/logo.png">
+</p>
+
 ## What's chicken?
 A chicken program only contains the tokens `"chicken"`, `" "` and `"\n"`. The number of chickens per line represent an opcode, which is loaded onto the same stack as the program and executed directly.
 
